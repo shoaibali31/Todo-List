@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Todo List</title>
+        <link rel="icon" type="image/png" href="https://i.postimg.cc/XqfRDfNx/Todo-List-PNG.png">
+
+        <style>
+            body{
+                background-color: black;
+            }
+            .top_container{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 20px;
+                color: antiquewhite;
+            }
+            .input_group{
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-top: 10px;
+            }
+            input{
+                padding: 5px;
+                font-size: 16px;
+            }
+
+            button{
+                padding: 6px 12px;
+                font-size: 16px;
+                cursor: pointer;
+                background-color: aqua;
+            }
+
+            #todos{
+                color: white;
+                font-family: 'Courier New', Courier, monospace;
+                margin-top: 20px;
+                margin-left: 100px;
+                display: flex;
+                flex-direction: column;
+                align-items: first baseline;
+            }
+
+            #todos > div {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class = "top_container">
+            <h1>TODO LIST</h1>
+            <div class = "input_group">
+                <input type="text" placeholder="Enter Your Todo's List...">
+                <button onclick="addTodo()">Add Todo!</button>
+            </div>
+        </div>
+        <div id="todos"></div>
+        <script>
+            let todos = [];
+
+            window.onload = function(){
+                const savedTodos = localStorage.getItem("todos");
+                if (savedTodos) {
+                    todos = JSON.parse(savedTodos);
+                    render();
+                }
+            }
+            function saveTodos() {
+                localStorage.setItem("todos", JSON.stringify(todos));
+            }
+
+            function addTodo() {
+                const input = document.querySelector("input");
+                const value = input.value.trim();
+                if (value !== "") {
+                    todos.push({ title: value});
+                    input.value = "";
+                    saveTodos();
+                    render();
+                }
+            }
+
+            function deleteTodo(index) {
+            todos.splice(index, 1);
+            saveTodos();
+            render();
+            }
+
+            function createTodoComponent(todo, index) {
+                const div = document.createElement("div");
+                const h4 = document.createElement("h4");
+                const button = document.createElement("button");
+                button.innerHTML = "Delete";
+                h4.innerHTML = todo.title;
+                div.append(h4);
+                div.append(button);
+                button.onclick = function () {
+                deleteTodo(index);
+                };
+                return div
+            }
+
+            function render() {
+                document.querySelector("#todos").innerHTML = "";
+                for (let i = 0; i < todos.length; i++) {
+                    const element = createTodoComponent(todos[i], i);
+                    document.querySelector("#todos").appendChild(element);
+                }
+            }
+
+            document.querySelector("input").addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    addTodo();
+                }
+            });
+        </script>
+    </body>
+</html>
